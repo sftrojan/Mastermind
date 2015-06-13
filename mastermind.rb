@@ -55,8 +55,6 @@ class Game
 		puts "Will give you a hint at how many colors and positions you have correct\n"
 		puts "Black Pegs mean the peg is the right color and the right position\n"
 		puts "White Pegs mean the peg is the right color, wrong position."
-		#please remove this later
-		puts @code
 		loop do 
 			puts "What is your guess?"
 			guess = gets.chomp.upcase.split('')
