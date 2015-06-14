@@ -4,6 +4,39 @@ class Game
 		@guesses = []
 		@key_pegs = []
 		@code = color_pegs
+		welcome
+		setting_game_loop
+	end 
+
+	def welcome
+		puts "Welcome to Mastermind!\n"
+		puts "The you may select to create a secret code, or the computer can\n"
+		puts "randomly select a four color code (may repeat in color) from \n"
+		puts "(R)ed, (B)lue, (G)reen, (O)range, (Y)ellow and (P)urple\n"
+		puts "You have 12 chances to guess the right code, and the key pegs\n"
+		puts "Will give you a hint at how many colors and positions you have correct\n"
+		puts "Black Pegs mean the peg is the right color and the right position\n"
+		puts "White Pegs mean the peg is the right color, wrong position.\n\n"
+	end 
+
+	def user
+		puts "Do you want to create (type 'create') the secret code, or break (type 'break') the computer-generated secret code?"
+		user_choice = gets.chomp
+	end 
+
+	def user_code_entry
+		puts "Create a 4 color code (which may repeat colors) from\n"
+		puts "(R)ed, (B)lue, (G)reen, (O)range, (Y)ellow and (P)urple"
+		@code = gets.chomp.upcase.split('')
+	end
+
+	def setting_game_loop
+		user_choice = user
+		if user_choice == "break"
+			game_loop
+		else
+			computer_guess_code
+		end 
 	end 
 
 	def color_pegs
@@ -11,8 +44,16 @@ class Game
 		[colors[rand(5)], colors[rand(5)], colors[rand(5)], colors[rand(5)]]
 	end 
 
+	def valid_user_entry(user_choice)
+		user_choice == ("create" || "break")
+	end 
+
 	def valid_move?(guess)
 		guess.all? { |x| ["R", "B", "G", "O", "Y", "P"].include?(x) } && guess.length == 4
+	end 
+
+	def valid_user_code?
+		@code.all? { |x| ["R", "B", "G", "O", "Y", "P"].include?(x) } && @code.length == 4
 	end 
 
 	def win?
@@ -47,14 +88,6 @@ class Game
 	end 
 
 	def game_loop
-		
-		puts "Welcome to Mastermind!\n"
-		puts "The computer has randomly selected a four color code (may repeat in color)\n"
-		puts "from (R)ed, (B)lue, (G)reen, (O)range, (Y)ellow and (P)urple\n"
-		puts "You have 12 chances to guess the right code, and the key pegs\n"
-		puts "Will give you a hint at how many colors and positions you have correct\n"
-		puts "Black Pegs mean the peg is the right color and the right position\n"
-		puts "White Pegs mean the peg is the right color, wrong position."
 		loop do 
 			puts "What is your guess?"
 			guess = gets.chomp.upcase.split('')
@@ -82,6 +115,30 @@ class Game
 		puts "\n\n You have #{(12-@counter)} turns left"
     	end 		
 	end	
+
+	def computer_guess_code
+		user_code_entry
+		until valid_user_code?
+   			puts "This is not a valid color choice. Try again!"
+   			user_code_entry
+  		end
+
+		loop do 
+			@guesses << color_pegs
+			compare
+			print_guesses
+
+	  		if win?
+				puts "Congratulations! You broke the code!"
+				exit
+			elsif out_of_guesses
+				puts "You ran out of chances to break the code! Try again later!"
+				exit
+			end
+			@counter +=1
+			puts "\n\n The computer has #{(12-@counter)} turns left"
+		end
+	end 
 end
 
 
